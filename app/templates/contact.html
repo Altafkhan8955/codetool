@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contact{% endblock title %}
+{% block content %}
+<!-- Contact Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+           <!-- <h6 class="section-title bg-white text-center text-primary px-3">Contact Us</h6>-->
+            <h1 class="mb-5">Contact for me</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            </div>
+            <div class="col-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+            {% if msg %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>{{ msg }}</strong>
+                <button class="type" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+                <form action="{% url 'contact' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Your Name" required>
+                                <label for="name">Your Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
+                                <label for="email">Your Email</label>
+                            </div>
+                        </div>
+                        <!--<div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="subject" placeholder="Subject">
+                                <label for="subject">Subject</label>
+                            </div>
+                        </div>-->
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" name="message" required placeholder="Leave a message here" id="message" style="height: 150px"></textarea>
+                                <label for="message">Write your query</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary text-center" type="submit">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Contact End -->    
+{% endblock %}
+    

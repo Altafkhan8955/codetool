@@ -1,0 +1,27 @@
+######################## image tool ###################################
+1, image background remove 
+2, image resize
+3, image Resize based on height and width  
+4, convert image format png
+5, convert image format jpg   
+6, convert image to zip
+7, extract zip file to image
+8, convert pdf to image
+
+############################# pdf tool ###################################
+1, convert image to pdf 
+2, combine multiple image to pdf 
+3, merge two pdf single pdf file
+4, convert text file to pdf       
+5, convert excel to pdf    
+6, convert csv file to pdf
+7, convert word to pdf
+8, convert ppt to pdf
+9, convert pdf to word docx
+10, convert pdf to ppt
+11, convert pdf to excel
+12, convert pdf to csv
+###########################################other Tool######################
+1, Get Country info
+2, Domain info
+3, UrlShortner                                   

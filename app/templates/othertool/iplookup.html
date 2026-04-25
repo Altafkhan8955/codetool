@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}IP Lookup{% endblock title %}
+{% block content %}
+{% load custom_filters %}
+<!-- image downloads -->
+  <!--form section--> 
+  <div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">IP Lookup</h6>
+            <h1 class="mb-5">Get Any IP information</h1>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            </div>
+            <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">  
+            </div>
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="team-item bg-light">
+                    <div class="overflow-hidden">
+                      <h1>IP Lookup:</h1>
+                      <form method="post" action="{% url 'ip_lookup' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label for="text">Enter IP Addr</label>
+                        <input type="text" name="ip" placeholder="Enter the ip addr." required>
+                    </div>
+                    <div class="text-center p-4">
+                        <small>Enter Ip Addr. and get it Location.</small>
+                    </div>
+                     <button type="submit" class="btn btn-primary">Get ip Info</button>
+                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  </div> 
+<!--country info-->
+{% if ip_addr.error %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ ip_addr.error }}</strong>
+    <button class="type" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% else %}
+<div class="container-xxl py-5">
+  <div class="container">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+          <h6 class="section-title bg-white text-center text-primary px-3">Ip Addr Location</h6>
+          <h1 class="mb-5">Get IP Location</h1>
+              <div class="team-item bg-light">
+                    <h2>country Info:</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Attribute</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>IP:</td>
+                                <td>{{ ip_addr.query }}</td>
+                            </tr>
+                            <tr>
+                                <td>Country Name:</td>
+                                <td>{{ ip_addr.country }}</td>
+                            </tr>
+                            <tr>
+                                <td>Region:</td>
+                                <td>{{ ip_addr.regionName }}</td>
+                            </tr>
+                            <tr>
+                                <td>City:</td>
+                                <td>{{ ip_addr.city }}</td>
+                            </tr>
+                            <tr>
+                                <td>Zip Code:</td>
+                                <td>{{ ip_addr.zip }}</td>
+                            </tr>
+                            <tr>
+                                <td>ISP:</td>
+                                <td>{{ ip_addr.isp }}</td>
+                            </tr>
+                            <tr>
+                                <td>TimeZone:</td>
+                                <td>{{ ip_addr.timezone }}</td>
+                            </tr>
+                            <tr>
+                                <td>Latitude:</td>
+                                <td>{{ ip_addr.lat }}</td>
+                            </tr>
+                            <tr>
+                                <td>Longitude:</td>
+                                <td>{{ ip_addr.lon }}</td>
+                            </tr>
+                        </tbody>
+                   </table>
+                   <a class="btn btn-primary" href="{% url 'get_country_info' %}">Go Back</a>
+         </div>
+      </div>
+  </div>
+</div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}country information{% endblock title %}
+{% block content %}
+{% load custom_filters %}
+<!-- image downloads -->
+  <!--form section--> 
+  <div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">country info</h6>
+            <h1 class="mb-5">Get country  information </h1>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            </div>
+            <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">  
+            </div>
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="team-item bg-light">
+                    <div class="overflow-hidden">
+                      <h1>country info:</h1>
+                      <form method="post" action="{% url 'get_country_info' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label for="text">Enter country name:</label>
+                        <input type="text" name="country_code" placeholder="Enter the country name" required>
+                    </div>
+                    <div class="text-center p-4">
+                        <small>Enter country name  get info.</small>
+                    </div>
+                     <button type="submit" class="btn btn-primary">Get Country Info</button>
+                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  </div> 
+<!--country info-->
+{% if country_info.error %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{ country_info.error }}</strong>
+    <button class="type" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% else %}
+<div class="container-xxl py-5">
+  <div class="container">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+          <h6 class="section-title bg-white text-center text-primary px-3">country info</h6>
+          <h1 class="mb-5">Get country information</h1>
+              <div class="team-item bg-light">
+                    <h2>country Info:</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Attribute</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Name:</td>
+                                <td>{{ country_info.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Capital:</td>
+                                <td>{{ country_info.capital }}</td>
+                            </tr>
+                            <tr>
+                                <td>Population:</td>
+                                <td>{{ country_info.population }}</td>
+                            </tr>
+                            <tr>
+                                <td>Area:</td>
+                                <td>{{ country_info.area }} square kilometers</td>
+                            </tr>
+                            <tr>
+                                <td>Currency:</td>
+                                <td>{{ country_info.currency }}</td>
+                            </tr>
+                            <tr>
+                                <td>Languages:</td>
+                                <td>{{ country_info.languages|join:', ' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Borders:</td>
+                                <td>{{ country_info.borders }}</td>
+                            </tr>
+                            <tr>
+                                <td>Other name:</td>
+                                <td>{{ country_info.other_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Calling code:</td>
+                                <td>{{ country_info.calling_code }}</td>
+                            </tr>
+                            <tr>
+                                <td>Capital Area:</td>
+                                <td>{{ country_info.capital_length }} square kilometers</td>
+                            </tr>
+                            <tr>
+                                <td>Demonym:</td>
+                                <td>{{ country_info.demonym }}</td>
+                            </tr>
+                            <tr>
+                                <td>Native name:</td>
+                                <td>{{ country_info.native_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Region:</td>
+                                <td>{{ country_info.region }}</td>
+                            </tr>
+                            <tr>
+                                <td>Subregion:</td>
+                                <td>{{ country_info.subregion }}</td>
+                            </tr>
+                            <tr>
+                                <td>Time zones:</td>
+                                <td>{{ country_info.time_zones }}</td>
+                            </tr>
+                            <tr>
+                                <td>More info:</td>
+                                <td><a href="{{ country_info.more_info }}" rel="dofollow">More info</a></td>
+                            </tr>
+                        </tbody>
+                   </table>
+                   <a class="btn btn-primary" href="{% url 'get_country_info' %}">Go Back</a>
+         </div>
+      </div>
+  </div>
+</div>
+</div>
+{% endif %}
+{% endblock %}

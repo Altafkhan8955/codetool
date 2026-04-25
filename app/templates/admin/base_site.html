@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}CodeTool Administrator{% endblock %}
+{% block branding %}
+  <h1 id="site-name" style="display: flex; align-items: center; gap: 10px;">
+     <a href="/" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
+      <img src="{% static 'img/apple-touch-icon.png' %}" alt="Codetool" style="height: 32px;">
+      <span>CodeTool Administrator</span>
+            <!--<h2 class="m-0 text-black font-weight-bold">CODE<span class="text-success font-weight-bold">TOOL</span></h2>-->        </a>
+    <span>CodeTool Administrator</span>
+  </h1>
+{% endblock %}
+{% block nav-global %}{% endblock %}

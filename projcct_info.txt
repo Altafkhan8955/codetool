@@ -1,0 +1,15 @@
+step1: create virtual environment and activate environment
+       command: 1, python -m venv venv
+                2, venv/scripts/activate #for windows
+                3, source/bin/activate #for linux
+step2: install requirement.txt file all module same version and create projct or app
+       command: 1, pip install req.txt 
+                2, paste the all project file
+step3: run python manage.py makemigration and migrate command 
+step4: create superuser python manage.py createsuperuser
+step5: install django-jet4 admin 
+    command: 1, python manage.py migrate django-jet4 and collect static file pythom manage.py collect static
+             2, add dashboard settings.py file app section run python manage.py migrate dashboard and collect static
+step6: run project python manage.py runserver
+
+           

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}url shortner{% endblock title %}
+{% block content %}
+{% load custom_filters %}
+<!-- image downloads -->
+  <!--form section--> 
+  <div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Url Shortner</h6>
+            <h1 class="mb-5">Enter url and Shorted url</h1>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            </div>
+            <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">  
+            </div>
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="team-item bg-light">
+                    <div class="overflow-hidden">
+                      <h1>Enter url</h1>
+                      <form method="post" action="{% url 'url_shortner' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="text" name="long_url" placeholder="Enter url.." required>
+                    </div>
+                    <br>
+                    <br>
+                    {% for url in urls %}
+                    <h2>Shortened URLs</h2>
+                    <div class="text-center p-4">
+                        <label for="long_url">Copy Shorted url:</label>
+                        <input type="text" name="" value="{{ url.0 }}">
+                        <li><a href="{{ url.0 }}" target="_blank">{{ url.0 }}</a></li> 
+                    </div>
+                    {% endfor %}
+                     <button type="submit" class="btn btn-primary">Shorten</button>
+                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  </div> 
+{% endblock %}
