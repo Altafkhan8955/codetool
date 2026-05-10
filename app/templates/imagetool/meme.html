@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Meme Generator{% endblock title %}
+{% block content %}
+{% load custom_filters %}
+<!-- image downloads -->
+{% if meme_image %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Image downloads</h6><h1 class="mb-5">Meme Generator</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><img class="img-fluid" src="{{ meme_image }}" alt="meme"></div><div class="position-relative d-flex justify-content-center" style="margin-top: -23px;"></div><div class="text-center p-4"><h5 class="mb-0">Meme Image:</h5></div><a id="downloadBtn"  href="{{ meme_image }}" download="meme.png" class="btn btn-primary">Download Meme</a> </div></div></div></div></div></div>
+{% else %}
+  <!--form section--><div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Upload Image</h6><h1 class="mb-5">Advanced AI Meme Generator</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><h1>Upload Image</h1><form method="post" enctype="multipart/form-data">{% csrf_token %}<label>Input Image:</label> <input type="file" name="image" required><label>Enter Top Text</label><input type="text" name="top_text" placeholder="Enter Top Text"><label>Enter Bottom Text</label><input type="text" name="bottom_text" placeholder="Enter Bottom Text"></div><br><button type="submit" class="btn btn-primary">Generate Meme</button></form></div></div></div></div></div></div>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meme Generator</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            background:#f4f4f4;
+            padding:40px;
+            text-align:center;
+        }
+
+        .container{
+            background:white;
+            padding:30px;
+            border-radius:10px;
+            width:500px;
+            margin:auto;
+            box-shadow:0 0 10px rgba(0,0,0,0.2);
+        }
+
+        input{
+            width:100%;
+            padding:12px;
+            margin-top:10px;
+            margin-bottom:15px;
+        }
+
+        button{
+            padding:12px 25px;
+            border:none;
+            background:#007bff;
+            color:white;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        img{
+            margin-top:20px;
+            max-width:100%;
+            border-radius:10px;
+        }
+
+        .download-btn{
+            display:inline-block;
+            margin-top:15px;
+            text-decoration:none;
+            background:green;
+            color:white;
+            padding:12px 20px;
+            border-radius:5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Image Meme Generator</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <input type="file" name="image" required>
+
+        <input type="text" name="top_text" placeholder="Enter Top Text">
+
+        <input type="text" name="bottom_text" placeholder="Enter Bottom Text">
+
+        <button type="submit">Generate Meme</button>
+    </form>
+
+    {% if meme_image %}
+
+        <h3>Generated Meme</h3>
+
+        <img src="{{ meme_image }}" id="memeImage">
+
+        <br>
+
+        <a href="{{ meme_image }}"
+           download="meme.png"
+           class="download-btn">
+           Download Meme
+        </a>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

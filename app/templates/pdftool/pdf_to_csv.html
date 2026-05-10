@@ -6,13 +6,7 @@
 <!-- image downloads -->
   <!--form section-->
   <!--form section-->
-<div class="container-xxl py-5">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-          {% if download_link %}
-            <h6 class="section-title bg-white text-center text-primary px-3">Upload pdf</h6>
-            <h1 class="mb-5">convert pdf file to csv and show all data csv file</h1>
-            <hr>
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s">{% if download_link %}<h6 class="section-title bg-white text-center text-primary px-3">Upload pdf</h6><h1 class="mb-5">convert pdf file to csv and show all data csv file</h1><hr>
            <!-- Download link -->
           <p>{{ download_link|safe }}</p>
             {% endif %}
@@ -21,36 +15,6 @@
         </div>
     </div>
     {% else %}
-    <!--form section-->
-  <div class="container-xxl py-5">
-    <div class="container">
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Upload pdf</h6>
-            <h1 class="mb-5">convert pdf file to csv and show all data csv file</h1>
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            </div>
-            <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">  
-            </div>
-            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
-                <div class="team-item bg-light">
-                    <div class="overflow-hidden">
-                      <h1>Upload pdf</h1>
-                      <form action="{% url 'pdf_to_csv' %}" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="file" name="pdf_file" accept=".pdf" required>
-                    </div>
-                    <div class="text-center p-4">
-                        <h5 class="mb-0">Upload pdf</h5>
-                        <small>convert pdf to csv</small>
-                    </div>
-                     <button type="submit" class="btn btn-primary">Submit</button>
-                     </form>
-                </div>
-            </div>
-        </div>
-    </div>
-  </div>
-  </div>
-  {% endif %}
+    <!--form section--><div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Upload pdf</h6><h1 class="mb-5">convert pdf file to csv and show all data csv file</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><h1>Upload pdf</h1><form action="{% url 'pdf_to_csv' %}" method="post" enctype="multipart/form-data">{% csrf_token %}<input type="file" name="pdf_file" accept=".pdf" required></div><div class="text-center p-4"><h5 class="mb-0">Upload pdf</h5><small>convert pdf to csv</small></div><button type="submit" class="btn btn-primary">Submit</button></form></div></div></div></div></div></div>
+{% endif %}
 {% endblock %}

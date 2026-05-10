@@ -1,0 +1,7 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}OG Image Generatorr{% endblock title %}
+{% block content %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">OG Image</h6><h1 class="mb-5">OG Image Generator</h1></div><div class="row justify-content-center"><div class="col-lg-6"><div class="bg-light p-4 rounded shadow"><form method="POST" action="/og_image_preview/" enctype="multipart/form-data">{% csrf_token %}<input type="text" name="title" class="form-control mb-3" placeholder="Enter Title" required value="{{ title }}"><textarea name="description" class="form-control mb-3" placeholder="Enter Description">{{ description }}</textarea><button type="submit" class="btn btn-primary w-100">Generate Image</button></form></div></div></div></div></div>
+{% endblock %}

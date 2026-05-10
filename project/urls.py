@@ -19,9 +19,9 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 
-#admin.site.site_header = "CODETOOL Administrator"
-#admin.site.site_title = "CODETOOL Administrator"
-#admin.site.index_title = "CODETOOL Administrator"
+admin.site.site_header = "CODETOOL Administrator"
+admin.site.site_title = "CODETOOL Administrator"
+admin.site.index_title = "CODETOOL Administrator"
 
 handler400 = 'app.views.custom_bad_request_view'
 handler401 = 'app.views.custom_unthorized_view'

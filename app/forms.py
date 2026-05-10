@@ -31,5 +31,23 @@ class ConvertzipForm(forms.Form):
 #convert video to audio
 class VideoForm(forms.Form):
     video_file = forms.FileField()
+#Keyword Density checker
+class KeywordForm(forms.Form):
+    text = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 6, 'class': 'form-control'}),
+        label="Enter Text"
+    )
+    keyword = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Enter Keyword"
+    )
+#page speed checker
+class URLForm(forms.Form):
+    url = forms.URLField(
+        label="Enter Website URL",
+        widget=forms.URLInput(attrs={'class': 'form-control'})
+    )
+
 
 

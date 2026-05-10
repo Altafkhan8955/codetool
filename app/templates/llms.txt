@@ -1,0 +1,44 @@
+# codetool
+
+> Codetool, image resizer, background remover, pdf converter, docx convert, excel converter, zip file handling, pdf editor, any video downloads, domain info, url shortner, qr_code Generator, Page Speed Checker, Keyword Density, Sitemap Validator, Robots txt Generator, OG Image Generator, Meta Tag Generator more..
+
+Important notes:
+codetool - Here same free tool like image handling pdf converter image resizer docx file converter video audio extract background remover domain info, doman recored checker and ip address info and more tool..
+
+(http://codetool.info/remove_background_img/): Remove image background easy and download automatically
+(https://codetool.info/image-resize/): Image Resizer resize your image
+(https://codetool.info/resize/): Resize Your Image based on height and width
+(https://codetool.info/convert_image_jpg_to_png/): Covert image format jpg to png
+(https://codetool.info/convert_image_format_to_jpg/): Covert image format to jpg
+(https://codetool.info/convert_image_format_to_zip/): Covert image format to zip 
+(https://codetool.info/extract_zip_file/): Extract zip file Original content
+(https://codetool.info/pdf_to_image/): Convert pdf file to image 
+(https://codetool.info/convert_image_to_pdf/): Covert image to pdf 
+(https://codetool.info/combine_images_to_pdf/): Combine multiple image to pdf
+(https://codetool.info/merge_two_pdf/): Merge two pdf file into single pdf
+(https://codetool.info/text-to-pdf/): Convert text file to pdf file
+(https://codetool.info/excel_to_pdf): Convert excel file to pdf file
+(https://codetool.info/csv_to_pdf/): Convert csv file to pdf file
+(https://codetool.info/ppt_to_pdf/): Convert ppt file to pdf file
+(https://codetool.info/word_to_pdf/): Convert word file to pdf file
+(https://codetool.info/pdf_to_word/): Convert pdf file to word file
+(https://codetool.info/meta_tag_generator/): Meta Tag Generator
+(https://codetool.info/og_image_generator/): OG Image Generator
+(https://codetool.info/robots_txt_generator/): Robot txt Generator
+(https://codetool.info/sitemap_validator/): Sitemap Validator
+(https://codetool.info/keyword_density/): Keyword Density
+(https://codetool.info/page_speed_checker/): Page Speed
+(https://codetool.info/domain_info/): Enter website name get information
+(https://codetool.info/country_info/): Get country information
+(https://codetool.info/convert_video_to_audio/): Convert video to audio
+(https://codetool.info/url_shortner/): Enter url and Shorted url
+(https://codetool.info/ip_lookup/): Get Any IP information
+(https://codetool.info/qr_generator/): Generate Qr Code for Any Url
+(https://codetool.info/contact/): Contact for me
+(https://codetool.info/image_compressor/): Compressor Your Image Size
+(https://codetool.info/image_watermark_adder/): Image Watermark Adder
+(https://codetool.info/image_watermark_remover/): Image Watermark Remover
+(https://codetool.info/image_face_blur/): Advanced AI Face Blur Tool
+(https://codetool.info/image_background_blur/): Advanced AI Background Blur Tool
+(https://codetool.info/meme_generator/): Advanced AI Meme Generator
+

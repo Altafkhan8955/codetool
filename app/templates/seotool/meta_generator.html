@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Meta Tag Generator{% endblock title %}
+{% block content %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Meta Tag</h6><h1 class="mb-5">Meta Tag Generator</h1></div><div class="row justify-content-center"><div class="col-lg-6"><div class="bg-light p-4 rounded shadow"><form method="POST" action="{% url 'meta_generator' %}" enctype="multipart/form-data">{% csrf_token %}<input type="text" name="title" class="form-control mb-3" placeholder="Page Title" value="{{ title }}"><textarea name="description" class="form-control mb-3" placeholder="Meta Description">{{ description }}</textarea><input type="text" name="keywords" class="form-control mb-3" placeholder="Keywords (comma separated)" value="{{ keywords }}"><input type="text" name="url" class="form-control mb-3" placeholder="Page URL" value="{{ url }}"><input type="text" name="image" class="form-control mb-3" placeholder="Image URL and name" value="{{ image }}"><button type="submit" class="btn btn-primary w-100">Generate Meta Tags</button></form></div></div></div></div></div>
+{% if title %}<div class="container-xxl py-5"><div class="container"><div class="bg-light p-4 rounded shadow"><h4>Generated Meta Tags</h4><pre id="metaCode" class="p-3 bg-white border">
+&lt;title&gt;{{ title }}&lt;/title&gt;
+&lt;meta name="description" content="{{ description }}"&gt;
+&lt;meta name="keywords" content="{{ keywords }}"&gt;
+
+&lt;!-- Meta Tag --&gt;
+
+&lt;meta property="og:title" content="{{ title }}"&gt;
+&lt;meta property="og:description" content="{{ description }}"&gt;
+&lt;meta property="og:image" content="{{ image }}"&gt;
+&lt;meta property="og:url" content="{{ url }}"&gt;
+
+&lt;!-- Social Media Meta Tag like Whatsapp --&gt;
+&lt;meta name="whatsapp:card" content="summary_large_image"&gt;
+&lt;meta name="whatsapp:title" content="{{ title }}"&gt;
+&lt;meta name="whatsapp:description" content="{{ description }}"&gt;
+&lt;meta name="whatsapp:image" content="{{ image }}"&gt;
+</pre><button onclick="copyMeta()" class="btn btn-primary mt-3">Copy Meta Tags</button></div></div></div>
+{% endif %}
+{% endblock %}

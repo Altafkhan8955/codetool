@@ -62,10 +62,14 @@ def custom_page_not_found_view(request, exception):
     return render(request, '404.html', status=404)
 def custom_server_error_view(request):
     return render(request, '500.html', status=500)
+def sitemap_view(request):
+    return render(request, 'sitemap.xml', content_type='application/xml')
+def sitemap0_view(request):
+    return render(request, 'sitemap-0.xml', content_type='application/xml')
 #########################image tool################################
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
-from .forms import ImageForm,ImageResizeForm,ResizeForm,ConvertpngForm,ConvertjpgForm,ConvertzipForm
+from .forms import ImageForm,ImageResizeForm,ResizeForm,ConvertpngForm,ConvertjpgForm,ConvertzipForm,KeywordForm,URLForm
 from app.models import ImageModel,ResizableImage,ResizedImage,ConvertpngModel,ConvertjpgModel
 from PIL import Image, ImageFilter
 import rembg
@@ -88,6 +92,13 @@ import csv
 import pandas as pd
 from pptx import Presentation
 from pptx.util import Inches
+import io
+from PIL import Image, ImageDraw, ImageFont
+import base64
+from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadedfile import InMemoryUploadedFile
+import numpy as np
+import cv2
 #remove image background
 def remove_background(image_path):
     # Use rembg to remove the background
@@ -309,6 +320,194 @@ def pdf_to_image(request):
         else:
             return HttpResponse("Conversion failed. The image file is not available.", status=500)
     return render(request, 'imagetool/pdf_to_image.html')
+#image compressor
+def ImageCompressor(request):
+    context = {}
+    if request.method == 'POST' and request.FILES.get('image'):
+        image_file = request.FILES['image']
+        # Open image using PIL
+        img = Image.open(image_file)
+        # Convert to RGB if PNG with transparency (important)
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        # Compress image (adjust quality here)
+        buffer = io.BytesIO()
+        img.save(buffer, format='JPEG', optimize=True, quality=85)  
+        buffer.seek(0)
+        # Convert to base64 for preview
+        import base64
+        img_base64 = base64.b64encode(buffer.getvalue()).decode()
+        context['image'] = img_base64
+        # Store compressed image in session (temporary)
+        request.session['compressed_image'] = img_base64
+    return render(request, 'imagetool/compressor.html', context)
+def DownloadCompressor(request):
+    img_data = request.session.get('compressed_image')
+    if not img_data:
+        return HttpResponse("No image found")
+    image_bytes = base64.b64decode(img_data)
+    response = HttpResponse(image_bytes, content_type='image/jpeg')
+    response['Content-Disposition'] = 'attachment; filename="compressed.jpg"'
+    return response
+##############################image watermark adder############################
+def safe_int(value, default=0):
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return default
+def ImageWatermark(request):
+    image_data = None
+    if request.method == 'POST':
+        image_file = request.FILES.get('image')
+        watermark_text = request.POST.get('watermark')
+        # Position from frontend
+        pos_x = safe_int(request.POST.get('pos_x', 0))
+        pos_y = safe_int(request.POST.get('pos_y', 0))
+        if image_file:
+            image = Image.open(image_file).convert("RGBA")
+            txt_layer = Image.new("RGBA", image.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(txt_layer)
+            try:
+                font = ImageFont.truetype("arial.ttf", 70)
+            except:
+                font = ImageFont.load_default()
+            draw.text((pos_x, pos_y), watermark_text,
+                      fill=(255, 255, 255, 150), font=font)
+            watermarked = Image.alpha_composite(image, txt_layer)
+            final_image = watermarked.convert("RGB")
+            buffer = io.BytesIO()
+            final_image.save(buffer, format='JPEG')
+            image_base64 = base64.b64encode(buffer.getvalue()).decode()
+            image_data = image_base64
+    return render(request, 'imagetool/watermark.html', {'image_data': image_data})
+# image watermark remover
+def RemoveWatermark(image):
+    # Convert to OpenCV format
+    img = np.array(image)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    # Convert to grayscale
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # Threshold to detect watermark (works for light text)
+    _, thresh = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY)
+    # Inpaint to remove watermark
+    result = cv2.inpaint(img, thresh, 3, cv2.INPAINT_TELEA)
+    return result
+def ImageWatermarkRemover(request):
+    context = {}
+    if request.method == 'POST' and request.FILES.get('image'):
+        uploaded_file = request.FILES['image']
+        # Open image using PIL
+        image = Image.open(uploaded_file).convert('RGB')
+        # Remove watermark
+        processed_img = RemoveWatermark(image)
+        # Convert back to RGB
+        processed_img = cv2.cvtColor(processed_img, cv2.COLOR_BGR2RGB)
+        pil_img = Image.fromarray(processed_img)
+        # Convert to base64 (NO saving)
+        buffer = BytesIO()
+        pil_img.save(buffer, format="PNG")
+        img_str = base64.b64encode(buffer.getvalue()).decode()
+        context['image'] = img_str
+    return render(request, 'imagetool/watermark-remover.html', context)
+##############################image face blur###################################
+def ImageFaceBlur(request):
+    blurred_image = None
+    if request.method == 'POST' and request.FILES.get('image'):
+        uploaded_image = request.FILES['image']
+        # Convert uploaded image to numpy array
+        file_bytes = np.asarray(bytearray(uploaded_image.read()), dtype=np.uint8)
+        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+        # Load OpenCV Face Detector
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray,scaleFactor=1.1,minNeighbors=5,minSize=(40, 40))
+        # Advanced Blur
+        for (x, y, w, h) in faces:
+            face = img[y:y+h, x:x+w]
+            # Strong Gaussian Blur
+            blurred_face = cv2.GaussianBlur(face, (99, 99), 30)
+            img[y:y+h, x:x+w] = blurred_face
+        # Convert image to base64
+        _, buffer = cv2.imencode('.jpg', img)
+        image_base64 = base64.b64encode(buffer).decode('utf-8')
+        blurred_image = image_base64
+    return render(request, 'imagetool/image_blur.html', {'blurred_image': blurred_image})
+##############################Image background blur#############################
+def BackgroundBlur(request):
+    blurred_image = None
+    if request.method == 'POST' and request.FILES.get('image'):
+        uploaded_image = request.FILES['image']
+        # Read image bytes
+        input_bytes = uploaded_image.read()
+        # Remove background using AI
+        output = rembg.remove(input_bytes)
+        # Convert original image to OpenCV
+        original_np = np.frombuffer(input_bytes, np.uint8)
+        original_img = cv2.imdecode(original_np, cv2.IMREAD_COLOR)
+        # Convert removed background image
+        removed_bg = Image.open(io.BytesIO(output)).convert("RGBA")
+        # Convert PIL to numpy
+        removed_np = np.array(removed_bg)
+        # Alpha mask
+        alpha = removed_np[:, :, 3]
+        # Create binary mask
+        mask = cv2.threshold(alpha, 0, 255, cv2.THRESH_BINARY)[1]
+        # Smooth edges
+        mask = cv2.GaussianBlur(mask, (21, 21), 11)
+        # Blur full image strongly
+        blurred_bg = cv2.GaussianBlur(original_img, (61, 61), 30)
+        # Normalize mask
+        mask = mask.astype(float) / 255.0
+        mask = cv2.merge([mask, mask, mask])
+        # Blend foreground + blurred background
+        foreground = original_img.astype(float) * mask
+        background = blurred_bg.astype(float) * (1 - mask)
+        final = cv2.add(foreground, background)
+        final = np.uint8(final)
+        # Convert final image to base64
+        _, buffer = cv2.imencode('.jpg', final)
+        image_base64 = base64.b64encode(buffer).decode('utf-8')
+        blurred_image = image_base64
+    return render(request, 'imagetool/background_blur.html', {'blurred_image': blurred_image})
+##############################meme generator###################################
+def MemeGenerator(request):
+    meme_image = None
+    if request.method == 'POST':
+        uploaded_image = request.FILES.get('image')
+        top_text = request.POST.get('top_text', '')
+        bottom_text = request.POST.get('bottom_text', '')
+        if uploaded_image:
+            # Open image
+            image = Image.open(uploaded_image).convert('RGB')
+            draw = ImageDraw.Draw(image)
+            # Font settings
+            try:
+                font = ImageFont.truetype("arial.ttf", 50)
+            except:
+                font = ImageFont.load_default()
+            width, height = image.size
+            # Draw Top Text
+            top_position = (width // 2, 50)
+            # Draw Bottom Text
+            bottom_position = (width // 2, height - 80)
+            # Function to draw outlined text
+            def draw_text_with_outline(position, text):
+                x, y = position
+                # Outline
+                for adj in range(-2, 3):
+                    for adj2 in range(-2, 3):
+                        draw.text((x + adj, y + adj2),text,font=font,fill='black',anchor='mm')
+                # Main text
+                draw.text((x, y),text,font=font,fill='white',anchor='mm')
+            draw_text_with_outline(top_position, top_text.upper())
+            draw_text_with_outline(bottom_position, bottom_text.upper())
+            # Convert image to base64
+            buffer = BytesIO()
+            image.save(buffer, format='PNG')
+            image_base64 = base64.b64encode(buffer.getvalue()).decode()
+            meme_image = f"data:image/png;base64,{image_base64}"
+    return render(request, 'imagetool/meme.html', {'meme_image': meme_image})
+
 ##############################pdf tool##########################################
 #convert image to pdf
 def convert_image_to_pdf(request):
@@ -872,10 +1071,12 @@ def IpLookup(request):
         url = f"http://ip-api.com/json/{ip}"
         response = requests.get(url)
         data = response.json()
-    return render(request, "iplookup.html", {"ip_addr": data})
+        return render(request, "othertool/iplookup.html", {"ip_addr": data})
+    return render(request, "othertool/iplookup.html")
 # QR Code Generator 
 import qrcode
 import base64
+import time
 def Qr_Generator(request):
     qr_code = None
     url = None
@@ -885,7 +1086,145 @@ def Qr_Generator(request):
         buffer = BytesIO()
         qr.save(buffer, format="PNG")
         qr_code = base64.b64encode(buffer.getvalue()).decode()
-    return render(request, "qr.html", {
-        "qr_code": qr_code,
-        "url": url
+    return render(request, "othertool/qr.html", {"qr_code": qr_code,"url": url})
+#########################Seo Tool###########################   
+from .utils import generate_og_image
+import xml.etree.ElementTree as ET
+import re
+def meta_generator(request):
+    context = {}
+    if request.method == "POST":
+        context = {
+            "title": request.POST.get("title"),
+            "description": request.POST.get("description"),
+            "keywords": request.POST.get("keywords"),
+            "url": request.POST.get("url"),
+        }
+    return render(request, "seotool/meta_generator.html", context)
+def og_form(request):
+    return render(request, 'seotool/og_form.html')
+def preview_image(request):
+    title = request.POST.get('title', 'Default Title')
+    description = request.POST.get('description', 'Default Description')
+
+    return render(request, 'seotool/og_preview.html', {
+        'title': title,
+        'description': description
     })
+def download_image(request):
+    title = request.GET.get('title', 'Default Title')
+    description = request.GET.get('description', 'Default Description')
+    image = generate_og_image(title, description)
+
+    response = HttpResponse(image, content_type="image/png")
+    response['Content-Disposition'] = 'attachment; filename="og-image.png"'
+    return response
+def RobotsGenerator(request):
+    content = ""
+    if request.method == "POST":
+        user_agent = request.POST.get("user_agent", "*")
+        disallow = request.POST.get("disallow", "")
+        allow = request.POST.get("allow", "")
+        crawl_delay = request.POST.get("crawl_delay", "")
+        sitemap = request.POST.get("sitemap", "")
+
+        lines = []
+        lines.append(f"User-agent: {user_agent}")
+
+        if disallow:
+            for path in disallow.split(','):
+                lines.append(f"Disallow: {path.strip()}")
+
+        if allow:
+            for path in allow.split(','):
+                lines.append(f"Allow: {path.strip()}")
+
+        if crawl_delay:
+            lines.append(f"Crawl-delay: {crawl_delay}")
+
+        if sitemap:
+            lines.append(f"Sitemap: {sitemap}")
+
+        content = "\n".join(lines)
+    return render(request, "seotool/robots_text.html", {
+        "robots_content": content
+    })
+def SitemapValidator(request):
+    result = None
+    urls = []
+    errors = []
+
+    if request.method == "POST":
+        sitemap_url = request.POST.get("sitemap_url")
+        if sitemap_url:
+            try:
+                response = requests.get(sitemap_url, timeout=10)
+                if response.status_code != 200:
+                    errors.append(f"Failed to fetch sitemap. Status: {response.status_code}")
+                else:
+                    try:
+                        root = ET.fromstring(response.content)
+                        namespace = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+                        for url_tag in root.findall('ns:url', namespace):
+                            loc = url_tag.find('ns:loc', namespace)
+                            if loc is not None:
+                                urls.append(loc.text)
+                        if urls:
+                            result = "✅ Valid Sitemap"
+                        else:
+                            result = "⚠️ No URLs found"
+                    except ET.ParseError:
+                        errors.append("Invalid XML format")
+            except Exception as e:
+                errors.append(str(e))
+        else:
+            errors.append("Please enter a sitemap URL")
+    return render(request, "seotool/sitemap.html", {"result": result,"urls": urls,"errors": errors})
+def KeywordDensity(request):
+    result = None
+    if request.method == "POST":
+        form = KeywordForm(request.POST)
+        if form.is_valid():
+            text = form.cleaned_data['text'].lower()
+            keyword = form.cleaned_data['keyword'].lower()
+            # Clean text
+            words = re.findall(r'\b\w+\b', text)
+            total_words = len(words)
+            # Count keyword occurrences
+            keyword_count = text.count(keyword)
+            # Calculate density
+            density = (keyword_count / total_words) * 100 if total_words > 0 else 0
+            result = {
+                'total_words': total_words,
+                'keyword_count': keyword_count,
+                'density': round(density, 2),
+                'keyword': keyword
+            }
+    else:
+        form = KeywordForm()
+    return render(request, 'seotool/keyword_density.html', {'form': form,'result': result})
+def PageSpeedChecker(request):
+    result = None
+    if request.method == "POST":
+        form = URLForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data['url']
+            try:
+                start_time = time.time()
+                response = requests.get(url, timeout=10)
+                load_time = time.time() - start_time
+                page_size = len(response.content) / 1024  # KB
+                result = {
+                    'url': url,
+                    'status_code': response.status_code,
+                    'load_time': round(load_time, 3),
+                    'page_size': round(page_size, 2),
+                }
+            except requests.exceptions.RequestException as e:
+                result = {
+                    'error': str(e)
+                }
+    else:
+        form = URLForm()
+    return render(request, 'seotool/speed_checker.html', { 'form': form,'result': result})
+    

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Robots txt Generator{% endblock title %}
+{% block content %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Robots txt</h6><h1 class="mb-5">Robot txt Generator</h1></div><div class="row justify-content-center"><div class="col-lg-6"><div class="bg-light p-4 rounded shadow"><form method="POST" action="{% url 'robots_txt_generator' %}" enctype="multipart/form-data">{% csrf_token %}<input type="text" name="user_agent" class="form-control mb-3" placeholder="Enter User agent"><input type="text" name="disallow" class="form-control mb-3" placeholder="Enter disallow list"><input type="text" name="allow" class="form-control mb-3" placeholder="Enter allow list"><input type="number" step="any" name="crawl_delay" class="form-control mb-3" placeholder="Enter crawl delay time"><input type="url" name="sitemap" class="form-control mb-3" placeholder="Enter sitemap url"><button type="submit" class="btn btn-primary w-100">Submit</button></form></div></div></div></div></div>
+{% if robots_content %}
+<div class="container-xxl py-5"><div class="container"><div class="bg-light p-4 rounded shadow"><h4>Generated Robots txt</h4><pre id="metaCode" class="p-3 bg-white border">{{ robots_content }}</pre><button onclick="copyMeta()" class="btn btn-primary mt-3">Copy</button></div></div></div>
+{% endif %}
+{% endblock %}

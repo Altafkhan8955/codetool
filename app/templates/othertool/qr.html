@@ -21,7 +21,7 @@
                   <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                   </div>
                   <div class="text-center p-4">
-                    <a href="{% url 'data:image/png;base64,{{ qr_code }}' %}" download="qrcode.png" class="btn btn-primary">Download</a> 
+                    <a href="data:image/png;base64,{{ qr_code }}" download="qrcode.png" class="btn btn-primary">Download</a> 
                   </div>
               </div>
           </div>
@@ -45,6 +45,7 @@
                   <div class="overflow-hidden">
                     <h1>QR Generator</h1>
                     <form method="post" action="{% url 'qr_generator' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
                      <label for="text">QR Generator</label>
                     <input type="text" name="url" placeholder="Enter url addr." required>
                   </div>

@@ -7,7 +7,12 @@
 6, convert image to zip
 7, extract zip file to image
 8, convert pdf to image
-
+9, image compressor
+10, image watermark adder
+11, image watermark remover
+12, image face blur
+13, image background blur
+14, meme generator
 ############################# pdf tool ###################################
 1, convert image to pdf 
 2, combine multiple image to pdf 
@@ -21,7 +26,18 @@
 10, convert pdf to ppt
 11, convert pdf to excel
 12, convert pdf to csv
+#############################Seo tool################
+1, meta tag generator
+2, og image generator
+3, robots text generator
+4, sitemap validator
+5, keyword density checker
+6, page speed checker 
 ###########################################other Tool######################
 1, Get Country info
 2, Domain info
-3, UrlShortner                                   
+3, UrlShortner  
+4, convert video to audio
+5, ip lookup
+6, qr generator
+                                 

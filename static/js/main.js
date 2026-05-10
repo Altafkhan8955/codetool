@@ -106,4 +106,9 @@
     });
     
 })(jQuery);
+function copyMeta() {
+    let text = document.getElementById("metaCode").innerText;
+    navigator.clipboard.writeText(text);
+    alert("Copied!");
+}
 

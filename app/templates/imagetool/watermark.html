@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Image Watermark Adder{% endblock title %}
+{% block content %}
+{% load custom_filters %}
+<!-- image downloads -->
+{% if image_data %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Image downloads</h6><h1 class="mb-5">Image Watermark Adder</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><img class="img-fluid" src="data:image/jpeg;base64,{{ image_data }}" alt="image_watermark"></div><div class="position-relative d-flex justify-content-center" style="margin-top: -23px;"></div><div class="text-center p-4"><h5 class="mb-0">Image Watermark:</h5></div><a href="data:image/jpeg;base64,{{ image_data }}" download="watermarked.jpg" class="btn btn-primary">Download</a></div></div></div></div></div></div>
+{% else %}
+<!--form section--><div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Upload Image</h6><h1 class="mb-5">Image Watermark Adder</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><h1>Upload Image</h1><form method="post" enctype="multipart/form-data">{% csrf_token %}<label>Input Image:</label> <input type="file" name="image" id="imageInput" required><br><label>Enter Watermark text:</label> <input type="text" name="watermark" id="watermarkInput" required><br><label>Enter weidth:</label><input type="number"  name="pos_x" id="pos_x"><br><label>Enter height:</label> <input type="number" name="pos_y" id="pos_y"></div><br><button type="submit" class="btn btn-primary">Submit</button></form></div></div></div></div></div></div>
+<script>
+const imageInput = document.getElementById('imageInput');
+const previewImg = document.getElementById('preview-img');
+const watermarkText = document.getElementById('watermark-text');
+const watermarkInput = document.getElementById('watermarkInput');
+
+const posX = document.getElementById('pos_x');
+const posY = document.getElementById('pos_y');
+// Show image preview
+imageInput.onchange = function(e) {
+    const file = e.target.files[0];
+    previewImg.src = URL.createObjectURL(file);
+};
+// Update text live
+watermarkInput.oninput = function() {
+    watermarkText.innerText = this.value;
+};
+
+// Drag functionality
+let dragging = false;
+let offsetX, offsetY;
+
+watermarkText.addEventListener('mousedown', function(e) {
+    dragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (dragging) {
+        const rect = previewImg.getBoundingClientRect();
+
+        let x = e.clientX - rect.left - offsetX;
+        let y = e.clientY - rect.top - offsetY;
+
+        watermarkText.style.left = x + 'px';
+        watermarkText.style.top = y + 'px';
+
+        posX.value = Math.max(0, x);
+        posY.value = Math.max(0, y);
+    }
+});
+
+document.addEventListener('mouseup', function() {
+    dragging = false;
+});
+</script>
+{% endif %}
+{% endblock %}

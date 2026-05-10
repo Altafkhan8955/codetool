@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sitemap Validator{% endblock title %}
+{% block content %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Sitemap</h6><h1 class="mb-5">Sitemap Validator</h1></div><div class="row justify-content-center"><div class="col-lg-6"><div class="bg-light p-4 rounded shadow"><form method="POST" action="{% url 'sitemap_validator' %}" enctype="multipart/form-data">{% csrf_token %}<input type="url" name="sitemap_url" class="form-control mb-3" placeholder="Enter Sitemap url" required><button type="submit" class="btn btn-primary w-100">Submit</button></form></div></div></div></div></div>
+
+<div class="container-xxl py-5"><div class="container"><div class="bg-light p-4 rounded shadow"><h3>Result</h3>
+{% if result %}
+      <h4>Sitemap Validator</h4>
+    <p class="success">{{ result }}</p>
+{% endif %}
+
+{% if errors %}
+    {% for error in errors %}
+        <p class="error">{{ error }}</p>
+    {% endfor %}
+{% endif %}
+
+{% if urls %}
+    <h3>URLs Found ({{ urls|length }})</h3>
+    <ul>
+        {% for url in urls %}
+            <li>{{ url }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

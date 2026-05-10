@@ -34,13 +34,6 @@ class ConvertpngModel(models.Model):
 #convert image format jpg
 class ConvertjpgModel(models.Model):
     image = models.ImageField(upload_to='convertjpg/')
-class SiteMaps(models.Model):
-    title = models.CharField(max_length=200)
-    slug = models.SlugField()
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title
 
     
 
