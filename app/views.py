@@ -509,6 +509,9 @@ def MemeGenerator(request):
     return render(request, 'imagetool/meme.html', {'meme_image': meme_image})
 
 ##############################pdf tool##########################################
+from PyPDF2 import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 #convert image to pdf
 def convert_image_to_pdf(request):
     if request.method == 'POST' and request.FILES['image']:
@@ -949,6 +952,165 @@ def download_csv(request, file_name):
     # Serve the file for download
     response = FileResponse(open(file_path, 'rb'))
     response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+    return response
+#########pdf password protect######
+def ProtectPdf(request):
+    if request.method == "POST":
+        pdf_file = request.FILES.get("pdf_file")
+        password = request.POST.get("password")
+        if pdf_file and password:
+            reader = PdfReader(pdf_file)
+            writer = PdfWriter()
+            # Add all pages
+            for page in reader.pages:
+                writer.add_page(page)
+            # Encrypt PDF
+            writer.encrypt(password)
+            # Save to memory
+            output_stream = BytesIO()
+            writer.write(output_stream)
+            output_stream.seek(0)
+            # Download response
+            response = HttpResponse(output_stream, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="protected.pdf"'
+            return response
+    return render(request, "pdftool/protect_pdf.html")
+def UnlockPdf(request):
+    context = {}
+    if request.method == "POST":
+        pdf_file = request.FILES.get("pdf_file")
+        password = request.POST.get("password")
+        try:
+            reader = PdfReader(pdf_file)
+            # Check encrypted
+            if reader.is_encrypted:
+                # Unlock PDF
+                result = reader.decrypt(password)
+                if result == 0:
+                    context["error"] = "Wrong Password!"
+                    return render(request, "pdftool/unlock_pdf.html", context)
+            writer = PdfWriter()
+            # Add all pages
+            for page in reader.pages:
+                writer.add_page(page)
+            # Save unlocked PDF in memory
+            output_stream = BytesIO()
+            writer.write(output_stream)
+            output_stream.seek(0)
+            # Download response
+            response = HttpResponse(output_stream, content_type="application/pdf")
+            response["Content-Disposition"] = ('attachment; filename="unlocked.pdf"')
+            return response
+        except Exception as e:
+            context["error"] = str(e)
+    return render(request, "pdftool/unlock_pdf.html", context)
+def PdfSplitTool(request):
+    context = {}
+    if request.method == 'POST':
+        pdf_file = request.FILES.get('pdf_file')
+        if pdf_file:
+            reader = PdfReader(pdf_file)
+            total_pages = len(reader.pages)
+            context['total_pages'] = total_pages
+            # Create ZIP in memory
+            zip_buffer = BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+                for page_num in range(total_pages):
+                    writer = PdfWriter()
+                    writer.add_page(reader.pages[page_num])
+                    single_pdf = BytesIO()
+                    writer.write(single_pdf)
+                    single_pdf.seek(0)
+                    zip_file.writestr(f'page_{page_num + 1}.pdf', single_pdf.read())
+            zip_buffer.seek(0)
+            # Save zip data in session temporary
+            request.session['split_pdf_ready'] = True
+            request.session['pdf_data'] = zip_buffer.getvalue().hex()
+            context['success'] = True
+    return render(request, 'pdftool/split_pdf.html', context)
+def DownloadSplitPdf(request):
+    pdf_hex = request.session.get('pdf_data')
+    if not pdf_hex:
+        return HttpResponse("No split PDF available.")
+    zip_bytes = bytes.fromhex(pdf_hex)
+    response = HttpResponse(zip_bytes, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="split_pdfs.zip"'
+    return response
+#######compress pdf
+def CompressPdf(request):
+    context = {}
+    if request.method == 'POST' and request.FILES.get('pdf_file'):
+        pdf_file = request.FILES['pdf_file']
+        reader = PdfReader(pdf_file)
+        writer = PdfWriter()
+        # Compress each page
+        for page in reader.pages:
+            page.compress_content_streams()
+            writer.add_page(page)
+        # Save compressed PDF in memory
+        output_stream = io.BytesIO()
+        writer.write(output_stream)
+        output_stream.seek(0)
+        # Store bytes for download
+        compressed_pdf = output_stream.getvalue()
+        request.session['compressed_pdf'] = compressed_pdf.hex()
+        context['success'] = True
+        context['original_size'] = round(pdf_file.size / 1024, 2)
+        context['compressed_size'] = round(len(compressed_pdf) / 1024, 2)
+    return render(request, 'pdftool/compress_pdf.html', context)
+def DownloadPdf(request):
+    pdf_hex = request.session.get('compressed_pdf')
+    if not pdf_hex:
+        return HttpResponse("No compressed PDF found")
+    pdf_bytes = bytes.fromhex(pdf_hex)
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="compressed.pdf"'
+    return response
+###########pdf watermark adder#################
+def CreateWatermark(text):
+    packet = io.BytesIO()
+    can = canvas.Canvas(packet, pagesize=letter)
+    can.setFont("Helvetica", 40)
+    can.setFillColorRGB(0.7, 0.7, 0.7)
+    can.saveState()
+    can.translate(300, 400)
+    can.rotate(45)
+    can.drawCentredString(-20, 0, text)
+    can.restoreState()
+    can.save()
+    packet.seek(0)
+    return PdfReader(packet)
+
+def AddWatermark(request):
+    context = {}
+    if request.method == 'POST':
+        pdf_file = request.FILES.get('pdf_file')
+        watermark_text = request.POST.get('watermark_text')
+        if pdf_file and watermark_text:
+            reader = PdfReader(pdf_file)
+            writer = PdfWriter()
+            watermark_pdf = CreateWatermark(watermark_text)
+            watermark_page = watermark_pdf.pages[0]
+            # Add watermark to every page
+            for page in reader.pages:
+                page.merge_page(watermark_page)
+                writer.add_page(page)
+            output_stream = io.BytesIO()
+            writer.write(output_stream)
+            output_stream.seek(0)
+            final_pdf = output_stream.getvalue()
+            request.session['watermarked_pdf'] = final_pdf.hex()
+            context['success'] = True
+            context['total_pages'] = len(reader.pages)
+            context['watermark_text'] = watermark_text
+    return render(request, 'pdftool/watermark_pdf.html', context)
+def DownloadWatermarkedPdf(request):
+    pdf_hex = request.session.get('watermarked_pdf')
+    if not pdf_hex:
+        return HttpResponse("No PDF Found")
+    pdf_bytes = bytes.fromhex(pdf_hex)
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="watermarked.pdf"'
     return response
 ###################################Other tool#################################################
 import whois

@@ -1,0 +1,104 @@
+Production configuration for Django with gunicorn and nginx  for Linux
+
+Step-1: goto /var/www/
+       create your rool folder and if you clone your GitHub repostries clone this /var/www/
+
+step-2: create virtual environment
+       command = python -m venv
+       activate = source venv/bin/activate
+       install requirements file
+       command = pip install -r requirements.txt
+
+step-3: test server with this command
+      command = gunicorn --bind 0.0.0.0:8000 project/settings.wsgi
+      and open browser http://YOUR_SERVER_IP:8000
+      stop gunicorn ctrl+c
+
+step-4: Create Gunicorn Service
+      command = nano /etc/systemd/system/codetool.service
+      fast inside this file exact this code :
+[Unit]
+Description=Gunicorn for Django Codetool
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+
+WorkingDirectory=/var/www/codetool
+
+ExecStart=/var/www/codetool/venv/bin/gunicorn \
+          --workers 3 \
+          --bind unix:/var/www/codetool/project.sock \
+          project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+
+and save file
+step-5: Reload services
+       command = systemctl daemon-reload
+       start gunicorn command = systemctl start codetool
+       enable auto-start command = systemctl enable codetool
+       check status command = systemctl status codetool        your see active (running) it ok if you see error it not ok have same misconfiguration check again all configurations
+
+step-5: Create Nginx Config
+       command = nano /etc/nginx/sites-available/codetool
+       Paste THIS EXACT CONFIG:
+server {
+    listen 80;
+
+    server_name YOUR_SERVER_IP;
+
+    client_max_body_size 100M;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        root /var/www/codetool;
+    }
+
+    location /media/ {
+        root /var/www/codetool;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/var/www/codetool/project.sock;
+    }
+}
+
+step-6: Enable Nginx Site
+       Remove default config:
+                      command = rm /etc/nginx/sites-enabled/default
+       Enable your project:
+                      command = ln -s /etc/nginx/sites-available/codetool /etc/nginx/sites-enabled
+       Test Nginx: 
+                 command = nginx -t it show ok if error pls check configuration are missing
+
+step-7: Restart Services
+        Restart Gunicorn: command = systemctl restart codetool
+        Restart Nginx: command = systemctl restart nginx
+        Enable nginx: command = systemctl enable nginx
+
+open your site it working fine
+note: add settings.py allow_host = ['your domain']
+     and config static or media file
+
+
+step-8: FINAL COMMANDS SUMMARY
+systemctl daemon-reload
+systemctl start codetool
+systemctl enable codetool
+
+nginx -t
+systemctl restart nginx
+
+if not have ssl follow thise step-9
+step-9: SSL HTTPS
+      Install SSL: command = sudo apt install certbot python3-certbot-nginx -y
+                   command = sudo certbot --nginx -d codetool.info -d www.codetool.info
+      Restart services command = sudo systemctl restart gunicorn
+                                 sudo systemctl restart nginx
+

@@ -168,4 +168,24 @@
         <loc>https://codetool.info/meme_generator/</loc>
         <priority>0.5</priority>
     </url>
+    <url>
+      <loc>https://codetool.info/protect_pdf/</loc>
+      <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://codetool.info/unlook_pdf/</loc>
+      <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://codetool.info/pdf_split/</loc>
+      <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://codetool.info/compress_pdf/</loc>
+      <priority>0.5</priority>
+   </url>
+   <url>
+      <loc>https://codetool.info/pdf_watermark_adder/</loc>
+      <priority>0.5</priority>
+   </url>
 </urlset>

@@ -41,4 +41,9 @@ codetool - Here same free tool like image handling pdf converter image resizer d
 (https://codetool.info/image_face_blur/): Advanced AI Face Blur Tool
 (https://codetool.info/image_background_blur/): Advanced AI Background Blur Tool
 (https://codetool.info/meme_generator/): Advanced AI Meme Generator
+(https://codetool.info/protect_pdf/): Pdf Password Protect
+(https://codetool.info/unlook_pdf/): Pdf Password Unlook
+(https://codetool.info/pdf_split/): Pdf Spliter Tool
+(https://codetool.info/compress_pdf/): Compress Pdf
+(https://codetool.info/pdf_watermark_adder/): Pdf WaterMark Adder
 

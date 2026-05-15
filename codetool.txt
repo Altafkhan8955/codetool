@@ -26,6 +26,11 @@
 10, convert pdf to ppt
 11, convert pdf to excel
 12, convert pdf to csv
+13, Pdf Password Protect
+14, Pdf Password Unlook
+15, Pdf Spliter
+16, Compress Pdf
+17, Pdf Watermark Adder
 #############################Seo tool################
 1, meta tag generator
 2, og image generator

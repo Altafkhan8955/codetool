@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pdf Compressor{% endblock title %}
+{% block content %}
+{% if success %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Pdf Compressor</h6><h1 class="mb-5">Download Compress Pdf</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="position-relative d-flex justify-content-center" style="margin-top: -23px;"><p class='text-success'>Original Size:<strong> {{ original_size }} KB</strong></p><p class='text-success'>Compressed Size:<strong> {{ compressed_size }} KB</strong></p></div><div class="text-center p-4"><a href="{% url 'download_pdf' %}" class="btn btn-primary">Download Pdf</a> </div></div></div></div></div></div></div>
+{% else %}
+<div class="container-xxl py-5"><div class="container"><div class="text-center wow fadeInUp" data-wow-delay="0.1s"><h6 class="section-title bg-white text-center text-primary px-3">Pdf Compressor</h6><h1 class="mb-5">Compress Pdf</h1><div class="row g-4"><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s"></div><div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s"></div><div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s"><div class="team-item bg-light"><div class="overflow-hidden"><h1>Pdf Compressor</h1><form method="post" action="{% url 'compress_pdf' %}" enctype="multipart/form-data">{% csrf_token %}<label for="text">Enter Pdf:</label><input type="file" name="pdf_file" accept=".pdf" required></div><div class="text-center p-4"><h5 class="mb-0">Pdf Compressor</h5></div><button type="submit" class="btn btn-primary">Submit</button></form></div></div></div></div></div></div>
+{% endif %}
+{% endblock %}
