@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pdf Watermark Adder{% endblock title %}
+{% block content %}
+{% if success %}
+<div class="container-xxl py-5">
+  <div class="container">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+          <h6 class="section-title bg-white text-center text-primary px-3">Pdf WaterMark</h6>
+          <h1 class="mb-5">Download Watermark Pdf</h1>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+          </div>
+          <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+          </div>
+          <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+              <div class="team-item bg-light">
+                  <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                  </div>
+                  <div class="text-center p-4">
+                    <p class='text-success'>Watermark Added Successfully</p><br>
+                    <p class='text-success'><strong>Total Pages:</strong> {{ total_pages }}</p><br>
+                    <p class='text-success'><strong>Watermark:</strong> {{ watermark_text }}</p><br>
+                    <a href="{% url 'download_watermarked_pdf' %}" class="btn btn-primary">Download Pdf</a> 
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+{% else %}
+<div class="container-xxl py-5">
+  <div class="container">
+      <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+          <h6 class="section-title bg-white text-center text-primary px-3">Pdf WaterMark</h6>
+          <h1 class="mb-5">Pdf WaterMark Adder</h1>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+          </div>
+          <div class="col-lg-1 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+          </div>
+          <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
+              <div class="team-item bg-light">
+                  <div class="overflow-hidden">
+                    <h1>Pdf WaterMark</h1>
+                    <form method="post" action="{% url 'pdf_watermark_adder' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                     <label for="text">Enter Pdf: </label>
+                     <input type="file" name="pdf_file" accept=".pdf" required>
+                     <label>Enter Watermark: </label>
+                     <input type="text" name="watermark_text" required>
+                  </div>
+                  <div class="text-center p-4">
+                      <h5 class="mb-0">Pdf WaterMark</h5>
+                  </div>
+                   <button type="submit" class="btn btn-primary">Submit</button>
+                   </form>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+</div>
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Add Watermark to PDF</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <input
+            type="file"
+            name="pdf_file"
+            accept=".pdf"
+            required
+        >
+
+        <input
+            type="text"
+            name="watermark_text"
+            placeholder="Enter Watermark Text"
+            required
+        >
+
+        <button type="submit">
+            Add Watermark
+        </button>
+
+    </form>
+
+    {% if success %}
+
+    <div class="result">
+
+        <h3>Watermark Added Successfully</h3>
+
+        <p>
+            <strong>Total Pages:</strong>
+            {{ total_pages }}
+        </p>
+
+        <p>
+            <strong>Watermark:</strong>
+            {{ watermark_text }}
+        </p>
+
+        <a
+            href="{% url 'download_watermarked_pdf' %}"
+            class="download-btn"
+        >
+            Download PDF
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
